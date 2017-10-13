@@ -40,12 +40,18 @@ $(MODULEHW): hw.c $(HW_TDA7419_LIBRARY_NAME) $(HW_FM_LIBRARY_NAME) $(HW_LCD_LIBR
 	
 getconf: getconf.c
 	@echo "Compiling getconf $@"
-	@$(CC) getconf.c -o $(SRC_ROOT_DIR)/getconf
+	@$(CC) getconf.c -o $(SRC_ROOT_DIR)/getconf -lintl
 
 clean:
 	@rm -rf BUILD lib python
 	@rm hw.py hw.c
 	
-install:
-	install -m 644 getconf $(DESTDIR)/usr/bin
-	install -m -d 644 python $(DESTDIR)/usr/share/libhw
+installdirs:
+	@mkdir -p ${DESTDIR}/usr/bin
+	@mkdir -p ${DESTDIR}/usr/share/libhw
+
+install: installdirs
+	@ echo "Installing to ${DESTDIR}"
+	@ install -m 755 getconf ${DESTDIR}/usr/bin/getconf
+	@ install -m 755 python/_hw.so ${DESTDIR}/usr/share/libhw
+	@ install -m 755 python/hw.py ${DESTDIR}/usr/share/libhw
