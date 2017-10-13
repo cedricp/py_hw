@@ -21,7 +21,7 @@ export
 SWIG ?= /usr/bin/swig
 PYTHON_DIR ?= /usr/local/include/python2.7
 
-all: libhw $(MODULEHW)
+all: libhw $(MODULEHW) getconf
 
 libhw:
 	@ mkdir -p $(INSTALL_LIB_DIR)
@@ -38,7 +38,14 @@ $(MODULEHW): hw.c $(HW_TDA7419_LIBRARY_NAME) $(HW_FM_LIBRARY_NAME) $(HW_LCD_LIBR
 	@cp hw.py $(SRC_ROOT_DIR)/python
 	@$(CXX) -shared -fPIC -Ihardware/include -I$(PYTHON_DIR) -I. -L$(INSTALL_LIB_DIR) hw.c -o $(MODULEHW) -lhw_fm -lhw_tda7419 -lhw_lcd -lwiringpi
 	
+getconf: getconf.c
+	@echo "Compiling getconf $@"
+	@$(CC) getconf.c -o $(SRC_ROOT_DIR)/getconf
+
 clean:
 	@rm -rf BUILD lib python
 	@rm hw.py hw.c
 	
+install:
+	install -m 644 getconf $(DESTDIR)/usr/bin
+	install -m -d 644 python $(DESTDIR)/usr/share/libhw
